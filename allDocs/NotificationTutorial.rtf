@@ -1,0 +1,423 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf460
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red52\green52\blue52;\red255\green255\blue255;\red142\green142\blue142;
+\red10\green86\blue216;\red252\green252\blue252;\red38\green38\blue38;\red107\green0\blue109;\red1\green30\blue103;
+\red0\green0\blue0;\red245\green245\blue245;\red3\green53\blue197;\red68\green133\blue214;\red216\green235\blue255;
+\red98\green98\blue98;\red39\green102\blue184;\red189\green217\blue249;\red252\green106\blue8;\red15\green112\blue1;
+}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\f0\b\fs30 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Notifications classes\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\b0\fs28 \cf2 Foundation provides 3 classes to deal with all your notification needs:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sl400\partightenfactor0
+\ls1\ilvl0
+\f1\fs20 \cf2 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 NSNotification
+\f0\fs28 : represents a notification.\cb1 \
+\ls1\ilvl0
+\f1\fs20 \cb3 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 NSNotificationCenter
+\f0\fs28 : broadcasts notifications and manages observers. Each app has a default notification center via 
+\f1\fs20 defaultCenter
+\f0\fs28 .\cb1 \
+\ls1\ilvl0
+\f1\fs20 \cb3 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 NSNotificationQueue
+\f0\fs28 : coalesces and delays notifications. Each thread has a default notification queue via 
+\f1\fs20 defaultQueue
+\f0\fs28 .\cb1 \
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+\cf2 \cb3 OS X offers a fourth class called 
+\f1\fs20 NSDistributedNotificationCenter
+\f0\fs28  for communication between processes. We will not cover this class in this series.\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\b\fs30 \cf2 Receiving notifications\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\b0\fs28 \cf2 To receive a notification you only need to know its name. Cocoa and Cocoa Touch are full of interesting and descriptively named notifications such as 
+\f1\fs20 UIKeyboardWillShowNotification
+\f0\fs28  and 
+\f1\fs20 UIApplicationDidReceiveMemoryWarningNotification
+\f0\fs28 . There are 165 public notifications in iOS 7.0 ({\field{\*\fldinst{HYPERLINK "https://gist.github.com/hpique/7554209"}}{\fldrslt \cf4 \ul \ulc4 \strokec4 annex A}}) and 393 in OS X 10.9 ({\field{\*\fldinst{HYPERLINK "https://gist.github.com/hpique/8198196"}}{\fldrslt \cf4 \ul \ulc4 \strokec4 annex B}}). Later we will see how to create your own notifications as well.\
+Receiving a notification takes very little code. Say you want to receive a memory warning (
+\f1\fs20 UIApplicationDidReceiveMemoryWarningNotification
+\f0\fs28 ) outside a 
+\f1\fs20 UIViewController
+\f0\fs28 , to clear a cache of some object. This is how it could look:\
+\pard\pardeftab720\sl300\partightenfactor0
+
+\f1\fs24 \cf5 \cb6 \strokec5 - \cf7 \strokec7 (\cf8 \strokec8 id\cf7 \strokec7 )\cf5 \strokec5  \cf9 \strokec9 init\cf5 \strokec5  \cf7 \strokec7 \{\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 \'a0\'a0\'a0\'a0\cf8 \strokec8 if\cf5 \strokec5  \cf7 \strokec7 (\cf8 \strokec8 self\cf5 \strokec5  = \cf7 \strokec7 [\cf8 \strokec8 super\cf5 \strokec5  \cf9 \strokec9 init\cf7 \strokec7 ])\cf5 \strokec5  \cf7 \strokec7 \{\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb6 \strokec5 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\cf9 \strokec9 _cache\cf5 \strokec5  = \cf7 \strokec7 [[\cf8 \strokec8 NSCache\cf5 \strokec5  \cf8 \strokec8 alloc\cf7 \strokec7 ]\cf12 \strokec12  init\cf7 \strokec7 ];\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\cf7 \strokec7 [[\cf8 \strokec8 NSNotificationCenter\cf5 \strokec5  \cf9 \strokec9 defaultCenter\cf7 \strokec7 ]\cf12 \strokec12  addObserver\cf9 \strokec9 :self\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf12 \cb6 \strokec12 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0selector\cf5 \strokec5 :\cf8 \strokec8 @selector\cf7 \strokec7 (\cf12 \strokec12 applicationDidReceiveMemoryWarning\cf5 \strokec5 :\cf7 \strokec7 )\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf12 \cb11 \strokec12 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0name\cf9 \strokec9 :UIApplicationDidReceiveMemoryWarningNotification\cf12 \strokec12  object\cf9 \strokec9 :nil\cf7 \strokec7 ];\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb6 \strokec5 \'a0\'a0\'a0\'a0\cf7 \strokec7 \}\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 \'a0\'a0\'a0\'a0\cf8 \strokec8 return\cf5 \strokec5  \cf8 \strokec8 self\cf7 \strokec7 ;\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf7 \cb6 \strokec7 \}\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf10 \cb11 \'a0\
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb6 \strokec5 - \cf7 \strokec7 (\cf8 \strokec8 void\cf7 \strokec7 )\cf12 \strokec12  applicationDidReceiveMemoryWarning\cf5 \strokec5 :\cf7 \strokec7 (\cf8 \strokec8 NSNotification*\cf7 \strokec7 )\cf9 \strokec9 notification\cf5 \strokec5  \cf7 \strokec7 \{\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 \'a0\'a0\'a0\'a0\cf7 \strokec7 [\cf12 \strokec12 _cache \cf9 \strokec9 removeAllObjects\cf7 \strokec7 ];\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf7 \cb6 \strokec7 \}\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf10 \cb11 \'a0\
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb6 \strokec5 - \cf7 \strokec7 (\cf8 \strokec8 void\cf7 \strokec7 )\cf9 \strokec9 dealloc\cf5 \strokec5  \cf7 \strokec7 \{\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 \'a0\'a0\'a0\'a0\cf7 \strokec7 [[\cf8 \strokec8 NSNotificationCenter\cf5 \strokec5  \cf9 \strokec9 defaultCenter\cf7 \strokec7 ]\cf12 \strokec12  removeObserver\cf9 \strokec9 :self\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf12 \cb6 \strokec12 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0name\cf9 \strokec9 :UIApplicationDidReceiveMemoryWarningNotification\cf7 \strokec7 ];\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf7 \cb11 \strokec7 \}\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf10 \cb6 \'a0\
+\pard\pardeftab720\sl500\sa411\partightenfactor0
+
+\f0\b\fs28 \cf2 \cb3 \strokec2 Adding the observer\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\b0 \cf2 The object that receives notifications is called observer, and must be added to a 
+\f1\fs20 NSNotificationCenter
+\f0\fs28 . Unless you have a very strong reason not to, that will always be the 
+\f1\fs20 defaultCenter
+\f0\fs28 .\
+\pard\pardeftab720\sl400\sa411\partightenfactor0
+
+\f1\fs20 \cf2 init
+\f0\fs28  and 
+\f1\fs20 viewDidLoad
+\f0\fs28  and 
+\f1\fs20 viewWillAppear:
+\f0\fs28  in 
+\f1\fs20 UIViewController
+\f0\fs28  are good candidates for adding observers. You should add the observer as late as possible and remove it as soon as possible to improve performance and avoid undesired side effects.\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+\cf2 Observers register to a specific notification by specifying the name of the notification (usually a constant) and the sender of the notification as filters. Both are optional; in the above example, we don\'92t care who the sender is so we pass 
+\f1\fs20 nil
+\f0\fs28 .\
+Specifying the sender is useful when different instances are sending notifications of the same name (e.g., you might be interested in the
+\f1\fs20 UITextFieldTextDidChangeNotification
+\f0\fs28  of a specific 
+\f1\fs20 UITextField
+\f0\fs28 ). If no sender is provided, you will receive all notifications with the given name. If no notification name is specified, you will receive all notifications of the given sender.\
+\pard\pardeftab720\sl500\sa411\partightenfactor0
+
+\b \cf2 Handling the notification\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\b0 \cf2 Observers will receive notifications until they are removed from the 
+\f1\fs20 NSNotificationCenter
+\f0\fs28 . Each notification is sent once per 
+\f1\fs20 addObserver
+\f0\fs28  call. If you are receiving more notifications than expected, it might be a sign that you added the observer more than once (e.g., this might happen if you register the observer for notifications in 
+\f1\fs20 viewWillAppear
+\f0\fs28  and unregister it in 
+\f1\fs20 dealloc
+\f0\fs28 ).\
+\pard\pardeftab720\sl400\sa411\partightenfactor0
+
+\f1\fs20 \cf2 NSNotificationCenter
+\f0\fs28  will call the selector provided in 
+\f1\fs20 addObserver:selector:name:object:
+\f0\fs28  with a single argument of type 
+\f1\fs20 NSNotification
+\f0\fs28 . The selector is called in the same thread in which the notification was posted. Typically this is the main thread, so only check if the selector is running in a different thread if the corresponding documentation says otherwise.\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+\cf2 The 
+\f1\fs20 NSNotification
+\f0\fs28  object is a box of chocolates. It comes with an 
+\f1\fs20 object
+\f0\fs28  
+\f1\fs20 id
+\f0\fs28  which is usually the sender of the notification and an 
+\f1\fs20 userInfo
+\f0\fs28 dictionary with additional information about the notification. For example:\
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trcbpat6 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clcbpat14 \clwWidth360\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth16920\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl300\qc\partightenfactor0
+
+\f1\fs24 \cf13 \cb1 \strokec13 1\
+\pard\intbl\itap1\pardeftab720\sl300\qc\partightenfactor0
+\cf16 \cb17 \strokec16 2\
+\pard\intbl\itap1\pardeftab720\sl300\qc\partightenfactor0
+\cf13 \cb1 \strokec13 3\
+\pard\intbl\itap1\pardeftab720\sl300\qc\partightenfactor0
+\cf16 \cb17 \strokec16 4\
+\pard\intbl\itap1\pardeftab720\sl300\qc\partightenfactor0
+\cf13 \cb1 \strokec13 5\
+\pard\intbl\itap1\pardeftab720\sl300\qc\partightenfactor0
+\cf16 \cb17 \strokec16 6\cell 
+\pard\intbl\itap1\pardeftab720\sl300\partightenfactor0
+\cf5 \cb1 \strokec5 - \cf7 \strokec7 (\cf8 \strokec8 void\cf7 \strokec7 )\cf12 \strokec12  moviePlayerPlaybackDidFinish\cf5 \strokec5 :\cf7 \strokec7 (\cf8 \strokec8 NSNotification*\cf7 \strokec7 )\cf9 \strokec9 notification\cf5 \strokec5  \cf7 \strokec7 \{\cf10 \strokec10 \
+\pard\intbl\itap1\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 \'a0\'a0\'a0\'a0\cf8 \strokec8 MPMoviePlayerController\cf5 \strokec5  \cf9 \strokec9 *mpObject\cf5 \strokec5  = \cf7 \strokec7 (\cf8 \strokec8 MPMoviePlayerController\cf5 \strokec5  \cf8 \strokec8 *\cf7 \strokec7 )\cf5 \strokec5  \cf9 \strokec9 notification\cf7 \strokec7 .\cf9 \strokec9 object\cf7 \strokec7 ;\cf5 \strokec5  \cf10 \strokec10 \
+\pard\intbl\itap1\pardeftab720\sl300\partightenfactor0
+\cf5 \cb1 \strokec5 \'a0\'a0\'a0\'a0\cf8 \strokec8 NSDictionary\cf5 \strokec5  \cf9 \strokec9 *userInfo\cf5 \strokec5  = \cf12 \strokec12 notification \cf9 \strokec9 userInfo\cf7 \strokec7 ;\cf10 \strokec10 \
+\pard\intbl\itap1\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 \'a0\'a0\'a0\'a0\cf8 \strokec8 MPMovieFinishReason\cf5 \strokec5  \cf9 \strokec9 reason\cf5 \strokec5  = \cf7 \strokec7 [[\cf9 \strokec9 userInfo\cf12 \strokec12  objectForKey\cf9 \strokec9 :MPMoviePlayerPlaybackDidFinishReasonUserInfoKey\cf7 \strokec7 ]\cf12 \strokec12  intValue\cf7 \strokec7 ];\cf10 \strokec10 \
+\pard\intbl\itap1\pardeftab720\sl300\partightenfactor0
+\cf5 \cb1 \strokec5  \cf7 \strokec7 \}\cf10 \strokec10 \
+\cell \lastrow\row
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\f0\fs28 \cf2 \cb3 \strokec2 Knowing the contents of this dictionary for a specific notification might require debugging or -god forbid- reading the documentation. Don\'92t assume that any particular key will be present unless told otherwise.\
+You can also handle notifications with blocks to make unit test enthusiasts cringe. The initial example becomes:\
+\pard\pardeftab720\sl300\partightenfactor0
+
+\f1\fs24 \cf5 \cb6 \strokec5 - \cf7 \strokec7 (\cf8 \strokec8 id\cf7 \strokec7 )\cf5 \strokec5  \cf9 \strokec9 init\cf5 \strokec5  \cf7 \strokec7 \{\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 \'a0\'a0\'a0\'a0\cf8 \strokec8 if\cf5 \strokec5  \cf7 \strokec7 (\cf8 \strokec8 self\cf5 \strokec5  = \cf7 \strokec7 [\cf8 \strokec8 super\cf5 \strokec5  \cf9 \strokec9 init\cf7 \strokec7 ])\cf5 \strokec5  \cf7 \strokec7 \{\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb6 \strokec5 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\cf9 \strokec9 _cache\cf5 \strokec5  = \cf7 \strokec7 [[\cf8 \strokec8 NSCache\cf5 \strokec5  \cf8 \strokec8 alloc\cf7 \strokec7 ]\cf12 \strokec12  init\cf7 \strokec7 ];\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\cf9 \strokec9 _observer\cf5 \strokec5  = \cf7 \strokec7 [[\cf8 \strokec8 NSNotificationCenter\cf5 \strokec5  \cf9 \strokec9 defaultCenter\cf7 \strokec7 ]\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf12 \cb6 \strokec12 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0addObserverForName\cf9 \strokec9 :UIApplicationDidReceiveMemoryWarningNotification\cf12 \strokec12  \cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf12 \cb11 \strokec12 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0object\cf9 \strokec9 :nil\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf12 \cb6 \strokec12 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0queue\cf9 \strokec9 :nil\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf12 \cb11 \strokec12 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0usingBlock\cf5 \strokec5 :^\cf7 \strokec7 (\cf8 \strokec8 NSNotification\cf5 \strokec5  \cf9 \strokec9 *notification\cf7 \strokec7 )\cf5 \strokec5  \cf7 \strokec7 \{\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb6 \strokec5 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\cf7 \strokec7 [\cf12 \strokec12 _cache \cf9 \strokec9 removeAllObjects\cf7 \strokec7 ];\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\cf7 \strokec7 \}\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb6 \strokec5 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\cf7 \strokec7 ];\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 \'a0\'a0\'a0\'a0\cf7 \strokec7 \}\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb6 \strokec5 \'a0\'a0\'a0\'a0\cf8 \strokec8 return\cf5 \strokec5  \cf8 \strokec8 self\cf7 \strokec7 ;\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf7 \cb11 \strokec7 \}\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf10 \cb6 \'a0\
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 - \cf7 \strokec7 (\cf8 \strokec8 void\cf7 \strokec7 )\cf9 \strokec9 dealloc\cf5 \strokec5  \cf7 \strokec7 \{\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb6 \strokec5 \'a0\'a0\'a0\'a0\cf7 \strokec7 [[\cf8 \strokec8 NSNotificationCenter\cf5 \strokec5  \cf9 \strokec9 defaultCenter\cf7 \strokec7 ]\cf12 \strokec12  removeObserver\cf5 \strokec5 :\cf10 \strokec10 _observer\
+\pard\pardeftab720\sl300\partightenfactor0
+\cf12 \cb11 \strokec12 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0name\cf9 \strokec9 :UIApplicationDidReceiveMemoryWarningNotification\cf7 \strokec7 ];\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf7 \cb6 \strokec7 \}\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf10 \cb11 \'a0\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\f0\fs28 \cf2 \cb3 \strokec2 The queue parameter is for asynchronous notificaions and is explained in {\field{\*\fldinst{HYPERLINK "http://www.hpique.com/2013/12/nsnotificationcenter-part-4/"}}{\fldrslt \cf4 \ul \ulc4 \strokec4 part 4}}.\
+\pard\pardeftab720\sl500\sa411\partightenfactor0
+
+\b \cf2 Removing the observer\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\b0 \cf2 The observer must be removed eventually, and you should do it as soon as you don\'92t need the notifications anymore. This is at best right after receiving the notification (e.g., to update the UI after 
+\f1\fs20 MPMoviePlayerPlaybackDidFinishNotification
+\f0\fs28 ) or at worst in 
+\f1\fs20 dealloc
+\f0\fs28 . If you forget to remove the observer, 
+\f1\fs20 NSNotificationCenter
+\f0\fs28  might send a notification to a deallocated instance, causing shenanigans.\
+\pard\pardeftab720\sl400\sa411\partightenfactor0
+
+\f1\fs20 \cf2 NSNotificationCenter
+\f0\fs28  provides two methods to remove observer. 
+\f1\fs20 removeObserver:
+\f0\fs28  and 
+\f1\fs20 removeObserver:name:object:
+\f0\fs28 . The former unregisters the observer for all notifications, and the latter does so for notifications of the given name and sender, either of which can be 
+\f1\fs20 nil
+\f0\fs28 . While it might be tempting to simply call 
+\f1\fs20 removeObserver:
+\f0\fs28 , this is a bad practice as you might be unregistering from notifications registered elsewhere (e.g., in a superclass, subclass or category). Try to be as specific as possible when removing the observer.\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+\cf2 As shown above, you also need to remove the observer when using blocks. In this case the observer is the object returned by
+\f1\fs20 addObserverForName:object:queue:usingBlock:
+\f0\fs28 . With these block observers you can use the single parameter 
+\f1\fs20 removeObserver:
+\f0\fs28  more comfortably.\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\b\fs30 \cf2 Sending synchronous notifications\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\b0\fs28 \cf2 Notifications are great to broadcast events that might be of general interest, such as model changes, user actions or the status of background processes. Unlike the delegate pattern, notifications can be used to notify various stakeholders and add very little coupling (in most cases, the observer only needs to know the notification name).\
+\pard\pardeftab720\sl500\sa411\partightenfactor0
+
+\b \cf2 Naming notifications\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\b0 \cf2 The first step in creating your own notification is choosing a unique name. The document {\field{\*\fldinst{HYPERLINK "https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html"}}{\fldrslt \cf4 \ul \ulc4 \strokec4 Coding Guidelines for Cocoa}} suggests:\
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trcbpat6 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clcbpat14 \clwWidth360\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth15320\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl300\qc\partightenfactor0
+
+\f1\fs24 \cf16 \cb17 \strokec16 2\cell 
+\pard\intbl\itap1\pardeftab720\sl300\partightenfactor0
+\cf7 \cb1 \strokec7 [\cf8 \strokec8 Name\cf5 \strokec5  \cf12 \strokec12 of associated \cf8 \strokec8 class\cf7 \strokec7 ]\cf5 \strokec5  + \cf7 \strokec7 [\cf8 \strokec8 Did\cf5 \strokec5  | \cf8 \strokec8 Will\cf7 \strokec7 ]\cf5 \strokec5  + \cf7 \strokec7 [\cf8 \strokec8 UniquePartOfName\cf7 \strokec7 ]\cf5 \strokec5  + \cf8 \strokec8 Notification\cf10 \strokec10 \
+\cell \lastrow\row
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\f0\fs28 \cf2 \cb3 \strokec2 For example:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sl480\partightenfactor0
+\ls2\ilvl0\cf2 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Good: 
+\f1\fs20 @"HPEAudioPlayerDidStartPlaybackNotification"
+\f0\fs28 \cb1 \
+\ls2\ilvl0\cb3 \kerning1\expnd0\expndtw0 \outl0\strokewidth0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 Bad: 
+\f1\fs20 @"didStartPlayback"
+\f0\fs28 \cb1 \
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+\cf2 \cb3 The notification name should be a public constant. This will allow you to change the name of the notification without requiring any changes in the observers.\
+\pard\pardeftab720\sl500\sa411\partightenfactor0
+
+\b \cf2 Posting the notification\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\b0 \cf2 Each app has a default 
+\f1\fs20 NSNotificationCenter
+\f0\fs28  instance that can be used to broadcast notifications. You can create the notification object yourself and post it, or use a couple of convenience methods that do this. If you don\'92t need to send any additional information, posting a notification is as simple as:\
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trcbpat6 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clcbpat14 \clwWidth360\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth15320\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl300\qc\partightenfactor0
+
+\f1\fs24 \cf13 \cb1 \strokec13 1\
+\pard\intbl\itap1\pardeftab720\sl300\qc\partightenfactor0
+\cf16 \cb17 \strokec16 2\cell 
+\pard\intbl\itap1\pardeftab720\sl300\partightenfactor0
+\cf7 \cb1 \strokec7 [[\cf8 \strokec8 NSNotificationCenter\cf5 \strokec5  \cf9 \strokec9 defaultCenter\cf7 \strokec7 ]\cf12 \strokec12  postNotificationName\cf9 \strokec9 :notificationName\cf12 \strokec12  object\cf9 \strokec9 :notificationSender\cf7 \strokec7 ];\cf10 \strokec10 \
+\cell \lastrow\row
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\f0\fs28 \cf2 \cb3 \strokec2 The 
+\f1\fs20 object
+\f0\fs28  parameter is typically used to pass the object sending the notification, normally 
+\f1\fs20 self
+\f0\fs28 . 
+\f1\fs20 NSNotificationCenter
+\f0\fs28  will create a
+\f1\fs20 NSNotification
+\f0\fs28  object for the given name and the given sender, and no additional information.\
+The notification is then sent to every registered observer in no defined order. Notifications are posted synchronously, meaning that
+\f1\fs20 postNotification:
+\f0\fs28  and its convenience methods will not return until all observers have processed the notification. Additionally, observers will be called in the same thread in which the notification is posted. Unless you explicitly state otherwise, observers will expect this to be the main thread.\
+Consider a background operation that notifies progress periodically. We want to send the notification and continue with our operation as soon as possible, and notify the observers in the main thread. A way to do this is with dispatch queues:\
+\pard\pardeftab720\sl300\partightenfactor0
+
+\f1\fs24 \cf8 \cb6 \strokec8 while\cf5 \strokec5  \cf7 \strokec7 (\cf5 \strokec5 !\cf9 \strokec9 finished\cf7 \strokec7 )\cf5 \strokec5  \cf7 \strokec7 \{\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 \'a0\'a0\'a0\'a0\cf18 \strokec18 // Do something\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb6 \strokec5 \'a0\'a0\'a0\'a0\cf12 \strokec12 dispatch_async\cf7 \strokec7 (\cf12 \strokec12 dispatch_get_main_queue\cf7 \strokec7 (),\cf5 \strokec5  ^\cf7 \strokec7 \{\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb11 \strokec5 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\cf7 \strokec7 [[\cf8 \strokec8 NSNotificationCenter\cf5 \strokec5  \cf9 \strokec9 defaultCenter\cf7 \strokec7 ]\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf12 \cb6 \strokec12 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0postNotificationName\cf9 \strokec9 :HPEBackgroundOperationDidIncreaseProgressNotification\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf12 \cb11 \strokec12 \'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0\'a0object\cf9 \strokec9 :self\cf7 \strokec7 ];\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf5 \cb6 \strokec5 \'a0\'a0\'a0\'a0\cf7 \strokec7 \});\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf7 \cb11 \strokec7 \}\cf10 \strokec10 \
+\
+\pard\pardeftab720\sl500\sa411\partightenfactor0
+
+\f0\b\fs28 \cf2 \cb3 \strokec2 Sending additional information\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\b0 \cf2 In most cases you will want to send additional information with the notification, such as the progress value in the example above. Notifications can have a dictionary with custom data called 
+\f1\fs20 userInfo
+\f0\fs28 . 
+\f1\fs20 NSNotifcationCenter
+\f0\fs28  offers a convenience method to post notifications with 
+\f1\fs20 userInfo
+\f0\fs28 :\
+\pard\pardeftab720\sl300\partightenfactor0
+
+\f1\fs24 \cf8 \cb6 \strokec8 NSDictionary\cf5 \strokec5  \cf9 \strokec9 *userInfo\cf5 \strokec5  = \cf7 \strokec7 @\{\cf19 \strokec19 @"someKey"\cf9 \strokec9 : someValue\cf7 \strokec7 \};\cf10 \strokec10 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf7 \cb11 \strokec7 [[\cf8 \strokec8 NSNotificationCenter\cf5 \strokec5  \cf9 \strokec9 defaultCenter\cf7 \strokec7 ]\cf12 \strokec12  postNotificationName\cf9 \strokec9 :notificationName\cf12 \strokec12  object\cf9 \strokec9 :notificationSender\cf12 \strokec12  userInfo\cf9 \strokec9 :userInfo\cf7 \strokec7 ];\cf10 \strokec10 \
+\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\f0\fs28 \cf2 \cb3 \strokec2 Again, you should define any 
+\f1\fs20 userInfo
+\f0\fs28  keys as public constants.\
+\pard\pardeftab720\sl500\sa411\partightenfactor0
+
+\b \cf2 Subclassing NSNotification\
+\pard\pardeftab720\sl480\sa411\partightenfactor0
+
+\b0 \cf2 If the 
+\f1\fs20 userInfo
+\f0\fs28  dictionary does not suit your needs or if you prefer typed atributes you can also subclass 
+\f1\fs20 NSNotification
+\f0\fs28 , with a few caveats.
+\f1\fs20 NSNotification
+\f0\fs28  is a Cocoa {\field{\*\fldinst{HYPERLINK "https://developer.apple.com/library/mac/documentation/general/conceptual/devpedia-cocoacore/ClassCluster.html"}}{\fldrslt \cf4 \ul \ulc4 \strokec4 class cluster}}, which is another way of calling an abstract class. In particular, it does not implement 
+\f1\fs20 name
+\f0\fs28 , 
+\f1\fs20 object
+\f0\fs28  and
+\f1\fs20 userInfo
+\f0\fs28  and throws an exception if you call 
+\f1\fs20 init
+\f0\fs28 .\
+Because of these caveats, subclassing 
+\f1\fs20 NSNotification
+\f0\fs28  is generally frowned upon and some developers prefer to use categories. Full examples of both approaches are provided in {\field{\*\fldinst{HYPERLINK "http://www.hpique.com/2013/12/nsnotificationcenter-part-2/"}}{\fldrslt \cf4 \ul \ulc4 \strokec4 part 2}} where we implement a typed observer with notifications.\
+When using your own 
+\f1\fs20 NSNotification
+\f0\fs28  subclass, the convenience methods to post the notification are no good. You are responsible for creating the notification object, and provide the 
+\f1\fs20 name
+\f0\fs28 , 
+\f1\fs20 object
+\f0\fs28  and 
+\f1\fs20 userInfo
+\f0\fs28  (if applicable) either in the subclass implementation or before calling
+\f1\fs20 postNotification:
+\f0\fs28 . For example:\
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trcbpat6 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clcbpat14 \clwWidth360\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx4320
+\clvertalt \clshdrawnil \clwWidth15320\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl300\qc\partightenfactor0
+
+\f1\fs24 \cf13 \cb1 \strokec13 1\
+\pard\intbl\itap1\pardeftab720\sl300\qc\partightenfactor0
+\cf16 \cb17 \strokec16 2\
+\pard\intbl\itap1\pardeftab720\sl300\qc\partightenfactor0
+\cf13 \cb1 \strokec13 3\cell 
+\pard\intbl\itap1\pardeftab720\sl300\partightenfactor0
+\cf8 \strokec8 HPECustomNotification\cf5 \strokec5  \cf9 \strokec9 *notification\cf5 \strokec5  = \cf7 \strokec7 [[\cf8 \strokec8 HPECustomNotification\cf5 \strokec5  \cf8 \strokec8 alloc\cf7 \strokec7 ]\cf12 \strokec12  initWithObject\cf9 \strokec9 :self\cf7 \strokec7 ];\cf10 \strokec10 \
+\pard\intbl\itap1\pardeftab720\sl300\partightenfactor0
+\cf7 \cb11 \strokec7 [[\cf8 \strokec8 NSNotificationCenter\cf5 \strokec5  \cf9 \strokec9 defaultCenter\cf7 \strokec7 ]\cf12 \strokec12  postNotification\cf9 \strokec9 :notification\cf7 \strokec7 ];\cf10 \strokec10 \cell \lastrow\row
+}
